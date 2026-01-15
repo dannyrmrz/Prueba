@@ -1,0 +1,336 @@
+.contenedorInput {
+  position: relative;
+  max-width: 440px;
+  width: 100%;
+  margin-bottom: 16px;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+
+.contenedorInputFile{
+    border: dashed #cccccc8e 2px;
+    border-radius: 5px;
+    padding: 20px;
+    color: #767272;
+    font-size: 15px;
+}
+
+.contenedorInputStyle{
+  position: relative;
+  max-width: 600px;
+  width: 100%;
+
+  
+
+}
+
+.iconoEye{
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  color: #7f8c88;
+  z-index: 10;
+  transition: color 0.2s ease;
+}
+
+.iconoEye:hover {
+  color: #506057;
+}
+
+.inputStylePassword {
+  padding: 0.9rem 0.85rem;
+  width: 100%;
+  max-width: 440px;
+  border: 1.5px solid #d7dad7;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  padding-left: 48px;
+  padding-right: 48px;
+  font-size: 1rem;
+  color: #162a20;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputStyleSearch {
+    padding: 8px;
+    width: 100%;
+    max-width: 400px;
+    border: 2px outset #5a60a5;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding-left: 40px;
+    color: black;
+    height: 42px;
+}
+
+
+
+.inputStyle {
+  padding: 0.9rem 0.85rem;
+  width: 100%;
+  max-width: 440px;
+  border: 1.5px solid #d7dad7;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  padding-left: 48px;
+  color: #162a20;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputStyle::placeholder {
+  color: #95a29c;
+}
+
+.inputStyle::-webkit-input-placeholder {
+  color: #95a29c;
+}
+
+.inputStyle::-moz-placeholder {
+  color: #95a29c;
+  opacity: 1;
+}
+
+.inputStyle:-ms-input-placeholder {
+  color: #95a29c;
+}
+
+
+.contenedorInputDate {
+    position: relative;
+    display: flex;
+    max-width: 400px;
+    width: 99%;
+    border: 2px solid #cccccc8e;
+    background-color: #ffffff;
+    border-radius: 4px;
+    margin-bottom: 10px;
+ 
+}
+
+.inputStyleDate {
+       
+    padding: 8px;
+    width: 100%;
+    max-width: 400px;
+    min-width: 388px;
+    border: none;
+    background-color: transparent;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding-left: 40px;
+    color: black;
+    z-index: 0;
+    
+}
+
+.inputStyleDate:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #5a60a500;
+}
+
+
+
+.inputFileStyle{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #767272;
+    transition: background-color 0.3s;
+}
+
+.iconoFile{
+    font-size: 30px;
+   color: inherit;
+}
+
+
+.errorInput{
+  position: relative;
+  max-width: 440px;
+  width: 100%;
+  border: 1.5px solid #d50c0c;
+  background-color: #fff5f5;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.iconoStyle{
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  user-select: none;
+  color: #f5a31f;
+  z-index: 2;
+  font-size: 0.95rem;
+}
+
+.iconoStyles{
+  position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%) translateX(-355px);
+    cursor: pointer;
+    pointer-events: none;
+    user-select: none;
+    color: #ffffff;
+    z-index: 3;
+
+}
+
+.iconoPopupStyle{
+  position: absolute;
+    left: 1%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-355px);
+    cursor: pointer;
+    pointer-events: none;
+    user-select: none;
+    color: #ffffff;
+    z-index: 3;
+
+}
+
+.iconoSelects{
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    pointer-events: none;
+    user-select: none;
+    color: #ffffff;
+    z-index: 2;
+}
+
+.selects {
+    position:relative;
+    display: inline-block;
+    color: black;
+    
+}
+
+.selects select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    color: black;
+}
+
+.inputStyle option {
+    color: black;
+ 
+}
+
+.iconoAbierto {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.contenedorInput:focus-within .inputStyle,
+.contenedorInput:focus-within .inputStylePassword {
+    border-color: #f5a31f;
+    box-shadow: 0 0 0 3px rgba(245, 163, 31, 0.15);
+}
+
+
+
+._inputStyleDate_lq3ui_85 {
+    
+    max-width: 620px;
+    border: 2px solid #cccccc3f;
+    background-color: #ffffff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding-left: 40px;
+    color: black;
+}
+
+
+
+
+
+
+
+
+/* MultiSelect.module.css */
+.multiSelectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.opcionesMulti{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 0px;
+}
+
+
+
+.searchInput {
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 120px;
+}
+
+.chip {
+  background-color: #d1d4ed92;
+  border-radius: 15px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #5a60a5;
+}
+
+.removeChip {
+  background: none;
+  border: none;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.dropdown {
+  background: white;
+  border: 1px solid #bbbad4;
+  border-radius: 5px;
+  padding: 0.5rem;
+  max-height: 200px;
+  max-width: 325px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-left: 35px;
+
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.option {
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: 3px;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.option:hover {
+  background-color: #f0f0f0;
+}
+
+.noOptions {
+  padding: 0.4rem;
+  color: #999;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}

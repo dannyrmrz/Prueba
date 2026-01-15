@@ -1,0 +1,21 @@
+.button-text {
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7771;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: baseline;
+}
+
+.button-text__label {
+  color: inherit;
+}
+
+.button-text__cta {
+  color: #f5a31f;
+  font-weight: 600;
+}
