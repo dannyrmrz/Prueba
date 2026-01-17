@@ -10,6 +10,12 @@
     #0a1510;
 }
 
+.app-shell--fluid {
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
 @media (max-width: 768px) {
   .app-shell {
     padding: clamp(1rem, 6vw, 2.5rem);

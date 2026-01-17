@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import './DashboardScreen.css';
+import '../Dashboard/DashboardScreen.css';
 
-const DashboardScreen = () => {
+const ProjectsScreen = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,10 +36,8 @@ const DashboardScreen = () => {
       <section className="dashboard-content">
         <div className="dashboard-content__body">
           <div className="dashboard-summary">
-            <p className="dashboard-summary__eyebrow">Overview</p>
-            <h1 className="dashboard-summary__title">
-              Welcome back, {user?.name || user?.email}
-            </h1>
+            <p className="dashboard-summary__eyebrow">Projects</p>
+            <h1 className="dashboard-summary__title">Projects hub</h1>
             <p className="dashboard-summary__copy">
               POR HACER
             </p>
@@ -50,4 +48,4 @@ const DashboardScreen = () => {
   );
 };
 
-export default DashboardScreen;
+export default ProjectsScreen;
