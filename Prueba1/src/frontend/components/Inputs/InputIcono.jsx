@@ -8,12 +8,14 @@ const IconoInput = ({
     placeholder,
     value,
     onChange,
-    type,
+    type = 'text',
     error = false,
     name = "",
     disabled=false,
     onFocus,
     formatoAa = false,
+    id,
+    autoComplete,
 }) => {
 
     // Handler que filtra si está activo formatoAa
@@ -55,10 +57,12 @@ const IconoInput = ({
                 placeholder= {placeholder}
                 disabled = {disabled}
                 onFocus={onFocus}
+                id={id}
+                autoComplete={autoComplete}
             />
 
             <span className={styles.iconoStyle} >
-                <FontAwesomeIcon icon={icono} style={{ color: error ? '#d50c0c' : '#f5a31f' }} />
+                <FontAwesomeIcon icon={icono} style={{ color: error ? '#d50c0c' : '#767272' }} />
             </span>
     
         </div>

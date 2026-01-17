@@ -2,6 +2,12 @@ const LOCAL_USERS_KEY = 'localUsers';
 const TOKEN_KEY = 'authToken';
 const SESSION_KEY = 'authSession';
 
+const normalizeEmail = (email = '') => email.trim().toLowerCase();
+const fallbackNameFromEmail = (email = '') => {
+  const [localPart] = email.split('@');
+  return localPart ? localPart.charAt(0).toUpperCase() + localPart.slice(1) : 'User';
+};
+
 const readUsers = () => {
   try {
     const stored = localStorage.getItem(LOCAL_USERS_KEY);
@@ -34,32 +40,44 @@ export const clearStoredSession = () => {
   localStorage.removeItem(SESSION_KEY);
 };
 
-export const registerLocalUser = ({ email, password }) => {
+export const registerLocalUser = ({ name = '', email, password }) => {
+  const normalizedEmail = normalizeEmail(email);
   const users = readUsers();
-  if (users.some((u) => u.email === email)) {
+  if (users.some((u) => normalizeEmail(u.email) === normalizedEmail)) {
     throw new Error('Ese email ya existe.');
   }
-  users.push({ email, password });
+  const safeName = name.trim() || fallbackNameFromEmail(normalizedEmail);
+  users.push({ name: safeName, email: normalizedEmail, password });
   writeUsers(users);
 };
 
 export const ensureDemoUser = () => {
   const users = readUsers();
-  const exists = users.some((user) => user.email === 'admin@tora.vc');
+  const demoEmail = normalizeEmail('admin@tora.vc');
+  const exists = users.some((user) => normalizeEmail(user.email) === demoEmail);
   if (!exists) {
-    users.push({ email: 'admin@tora.vc', password: 'admin123' });
+    users.push({ name: 'Admin User', email: demoEmail, password: 'admin123' });
     writeUsers(users);
   }
 };
 
 export const authenticateLocalUser = ({ email, password }) => {
   const users = readUsers();
-  const user = users.find((u) => u.email === email && u.password === password);
+  const normalizedEmail = normalizeEmail(email);
+  const user = users.find(
+    (u) => normalizeEmail(u.email) === normalizedEmail && u.password === password
+  );
   if (!user) {
     throw new Error('Credenciales inválidas.');
   }
   const token = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-  const session = { user: { email: user.email }, token };
+  const session = {
+    user: {
+      email: user.email,
+      name: user.name || fallbackNameFromEmail(user.email)
+    },
+    token
+  };
   persistSession(session);
   return session;
 };

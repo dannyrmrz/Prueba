@@ -4,7 +4,8 @@ import {
   authenticateLocalUser,
   ensureDemoUser,
   getStoredSession,
-  clearStoredSession
+  clearStoredSession,
+  registerLocalUser
 } from '../../backend/services/localUserStore';
 
 const AuthContext = createContext(null);
@@ -37,6 +38,10 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
+  const register = async ({ name, email, password }) => {
+    registerLocalUser({ name, email, password });
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -44,7 +49,8 @@ export const AuthProvider = ({ children }) => {
       isLoading,
       isAuthenticated: Boolean(user && token),
       login,
-      logout
+      logout,
+      register
     }),
     [user, token, isLoading]
   );

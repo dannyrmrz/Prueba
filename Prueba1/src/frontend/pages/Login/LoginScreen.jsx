@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import ButtonForm from '../../components/ButtonForm/ButtonForm';
 import ButtonText from '../../components/ButtonText/ButtonText';
 import InputPassword from '../../components/Inputs/InputPassword';
 import { useAuth } from '../../context/AuthContext';
-import InputIcono from '../../components/Inputs/InputIcono';
 import './LoginScreen.css';
+import { useNavigate } from 'react-router-dom';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +14,14 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -30,7 +37,7 @@ const LoginScreen = () => {
     try {
       await login({ email, password });
       console.info('Login local OK');
-      window.location.href = '/dashboard';
+      navigate('/dashboard');
     } catch (err) {
       setErrorMessage(err.message);
     } finally {
@@ -39,7 +46,7 @@ const LoginScreen = () => {
   };
 
   const handleSignUp = () => {
-    window.location.href = '/signup';
+    navigate('/signup');
   };
 
   const togglePasswordVisibility = () => {
@@ -113,9 +120,14 @@ const LoginScreen = () => {
         </form>
 
         <div className="login-card__footer">
-          <span>Don’t have an account?</span>
-          <ButtonText label="Sign Up" onClick={handleSignUp} />
+          <ButtonText
+            texto="Don't have an account?"
+            textoButton="Sign Up"
+            accion={handleSignUp}
+          />
         </div>
+
+        
       </div>
     </main>
   );

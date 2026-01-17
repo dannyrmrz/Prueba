@@ -1,0 +1,22 @@
+.dashboard-screen {
+  width: min(480px, 100%);
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-card {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: clamp(2rem, 4vw, 3rem);
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(4, 10, 7, 0.35);
+}
+
+.dashboard-card h1 {
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-card p {
+  color: #6b7771;
+}

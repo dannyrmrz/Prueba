@@ -1,0 +1,124 @@
+.signup-screen {
+  width: min(440px, 100%);
+  display: flex;
+  justify-content: center;
+}
+
+.signup-card {
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 18px;
+  padding: clamp(2rem, 4vw, 2.8rem);
+  box-shadow: 0 30px 80px rgba(4, 10, 7, 0.6);
+  position: relative;
+  text-align: left;
+}
+
+.signup-card__badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #f5a31f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 1rem;
+}
+
+.signup-card__title {
+  font-size: clamp(1.7rem, 3vw, 2rem);
+  color: #102116;
+  text-align: center;
+  margin: 0;
+}
+
+.signup-card__subtitle {
+  text-align: center;
+  margin: 0.35rem 0 1.5rem;
+  color: #6b7771;
+}
+
+.signup-card__benefits {
+  background-color: #fefaf4;
+  border: 1px solid rgba(245, 163, 31, 0.3);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.92rem;
+  color: #6b7771;
+}
+
+.signup-card__benefits-heading {
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+  color: #6b7771;
+}
+
+.signup-card__benefits ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.signup-card__benefits li {
+  line-height: 1.35;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-form__label {
+  display: block;
+  font-weight: 600;
+  color: #18261d;
+  margin-bottom: 0.4rem;
+}
+
+.signup-form .contenedorInput {
+  margin-bottom: 1.1rem;
+}
+
+.signup-form__legal {
+  font-size: 0.85rem;
+  color: #6b7771;
+  margin: 0.1rem 0 1rem;
+}
+
+.signup-form__legal span {
+  color: #f5a31f;
+  font-weight: 600;
+}
+
+.signup-form__error {
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.signup-form__success {
+  color: #1e8842;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.signup-card__footer {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  color: #6b7771;
+  margin-top: 1.6rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 520px) {
+  .signup-card {
+    padding: 1.8rem;
+  }
+}
