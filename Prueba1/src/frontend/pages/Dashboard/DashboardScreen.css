@@ -2,67 +2,185 @@
   width: 100%;
   min-height: 100vh;
   display: flex;
-  gap: clamp(1.25rem, 3vw, 2rem);
   align-items: stretch;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  background-color: #fefaf4;
 }
 
 .dashboard-content {
   flex: 1;
-  background-color: rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 25px 80px rgba(4, 10, 7, 0.45);
+  padding: clamp(2rem, 3vw, 3.5rem);
+  background-color: #fefaf4;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  gap: 2rem;
 }
 
-.dashboard-content__body {
-  margin-top: 1.5rem;
+.dashboard-header {
+  max-width: 780px;
+}
+
+.dashboard-header__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.72rem;
+  color: #a09a8f;
+  margin: 0 0 0.5rem;
+}
+
+.dashboard-header__title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: #110f0c;
+}
+
+.dashboard-header__subtitle {
+  margin: 0.35rem 0 0;
+  color: #756d63;
+}
+
+.dashboard-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+}
+
+.metric-card {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 20px 60px rgba(10, 15, 5, 0.08);
   display: flex;
   flex-direction: column;
+  gap: 0.3rem;
+}
+
+.metric-card__label {
+  margin: 0;
+  color: #8c867c;
+  font-size: 0.95rem;
+}
+
+.metric-card__value {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #18120b;
+}
+
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 1.5rem;
 }
 
-.dashboard-summary {
-  background: linear-gradient(135deg, rgba(245, 163, 31, 0.12), rgba(255, 255, 255, 0.04));
-  border-radius: 18px;
-  padding: 1.5rem;
-  color: #f5f5f0;
+.chart-card {
+  background-color: #ffffff;
+  border-radius: 28px;
+  padding: 1.6rem;
+  box-shadow: 0 25px 70px rgba(12, 18, 9, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.dashboard-summary__eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  font-size: 0.75rem;
-  color: rgba(245, 245, 240, 0.65);
-  margin: 0 0 0.6rem;
-}
-
-.dashboard-summary__title {
-  margin: 0 0 0.5rem;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-}
-
-.dashboard-summary__copy {
+.chart-card__header h2 {
   margin: 0;
-  color: rgba(245, 245, 240, 0.8);
-  line-height: 1.5;
+  font-size: 1.2rem;
+  color: #1c1811;
 }
 
-@media (max-width: 900px) {
+.chart-card__header p {
+  margin: 0.25rem 0 0;
+  color: #817a71;
+  font-size: 0.95rem;
+}
+
+.chart-card__body {
+  min-height: 320px;
+}
+
+.chart-card__body--bars,
+.chart-card__body--pie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: #817a71;
+  font-size: 0.9rem;
+}
+
+.chart-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: #1d1a13;
+}
+
+.chart-card__empty {
+  color: #a8a29a;
+}
+
+.chart-tooltip {
+  background: #1b1b1b;
+  color: #ffffff;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.chart-tooltip__label {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.chart-tooltip__value {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dashboard-state {
+  background-color: #ffffff;
+  border-radius: 28px;
+  padding: 2.5rem;
+  text-align: center;
+  color: #7c756b;
+  box-shadow: 0 25px 70px rgba(12, 18, 9, 0.08);
+}
+
+.dashboard-state--error {
+  color: #c0392b;
+}
+
+@media (max-width: 1100px) {
   .dashboard-layout {
     flex-direction: column;
   }
 
-  .sidebar {
-    width: 100%;
-    min-height: auto;
+  .dashboard-content {
+    padding: 1.75rem;
   }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 700px) {
+  .dashboard-metrics {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .chart-card {
+    padding: 1.2rem;
+  }
+
   .dashboard-layout {
     gap: 1rem;
   }

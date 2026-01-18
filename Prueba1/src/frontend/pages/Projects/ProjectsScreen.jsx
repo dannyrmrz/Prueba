@@ -34,14 +34,15 @@ const ProjectsScreen = () => {
       />
 
       <section className="dashboard-content">
-        <div className="dashboard-content__body">
-          <div className="dashboard-summary">
-            <p className="dashboard-summary__eyebrow">Projects</p>
-            <h1 className="dashboard-summary__title">Projects hub</h1>
-            <p className="dashboard-summary__copy">
-              POR HACER
-            </p>
-          </div>
+        <header className="dashboard-header">
+          <h1 className="dashboard-header__title">Projects</h1>
+          <p className="dashboard-header__subtitle">
+            Manage and view all projects
+          </p>
+        </header>
+
+        <div className="dashboard-state">
+          POR HACER
         </div>
       </section>
     </main>
