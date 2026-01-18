@@ -106,6 +106,29 @@ const buildProjectsByCategory = (projects) => {
     }));
 };
 
+const resolveCompanyName = (project) => {
+  const raw =
+    project.Company ||
+    project['Company Name'] ||
+    project.Client ||
+    project['Client Name'] ||
+    'Sin nombre';
+  const normalized = raw.toString().trim();
+  return normalized || 'Sin nombre';
+};
+
+const buildTopCompaniesSeries = (projects, limit = 6) => {
+  return projects
+    .map((project) => ({
+      company: resolveCompanyName(project),
+      revenue: Number(parseRevenueToMillions(project.Revenue).toFixed(2)),
+      growth: Number(parseGrowthValue(project.Growth).toFixed(1))
+    }))
+    .filter((entry) => entry.company && (entry.revenue > 0 || entry.growth !== 0))
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, limit);
+};
+
 export const useProjectsInsights = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -149,7 +172,8 @@ export const useProjectsInsights = () => {
   const charts = useMemo(
     () => ({
       revenueByCategory: buildRevenueByCategory(projects),
-      projectsByCategory: buildProjectsByCategory(projects)
+      projectsByCategory: buildProjectsByCategory(projects),
+      topCompanies: buildTopCompaniesSeries(projects)
     }),
     [projects]
   );

@@ -35,7 +35,7 @@ const ProjectsScreen = () => {
 
       <section className="dashboard-content">
         <header className="dashboard-header">
-          <h1 className="dashboard-header__title">Projects</h1>
+          <h1 className="dashboard-header__title">Projects Overview</h1>
           <p className="dashboard-header__subtitle">
             Manage and view all projects
           </p>

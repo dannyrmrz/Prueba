@@ -10,6 +10,10 @@
   transition: width 200ms ease, padding 200ms ease;
   flex-shrink: 0;
   box-shadow: 12px 0 40px rgba(4, 10, 7, 0.45);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar--collapsed {
@@ -183,6 +187,9 @@
     border-radius: 18px;
     min-height: auto;
     box-shadow: 0 25px 60px rgba(4, 10, 7, 0.35);
+    position: static;
+    height: auto;
+    overflow: visible;
   }
 
   .sidebar__logo {
