@@ -273,18 +273,31 @@ const ProjectsScreen = () => {
 
       return (
         <tr key={row.id}>
-          <td className="projects-table__cell projects-table__cell--company">{row.companyName}</td>
-          <td className="projects-table__cell">
-            <span className="projects-table__category-pill">{row.category}</span>
-          </td>
-          <td className="projects-table__cell projects-table__cell--meta">{row.founded}</td>
-          <td className="projects-table__cell projects-table__cell--meta">{row.employees}</td>
-          <td className="projects-table__cell projects-table__cell--amount">{row.revenue}</td>
-          <td className="projects-table__cell projects-table__cell--growth">{row.growth}</td>
-          <td className="projects-table__cell">
-            <span className={statusClass}>{row.status}</span>
-          </td>
-          <td className="projects-table__cell projects-table__cell--actions">
+            <td
+                className="projects-table__cell projects-table__cell--company"
+                data-label="Company Name"
+            >
+                {row.companyName}
+            </td>
+            <td className="projects-table__cell" data-label="Category">
+                <span className="projects-table__category-pill">{row.category}</span>
+            </td>
+            <td className="projects-table__cell projects-table__cell--meta" data-label="Founded">
+                {row.founded}
+            </td>
+            <td className="projects-table__cell projects-table__cell--meta" data-label="Employees">
+                {row.employees}
+            </td>
+            <td className="projects-table__cell projects-table__cell--amount" data-label="Revenue">
+                {row.revenue}
+            </td>
+            <td className="projects-table__cell projects-table__cell--growth" data-label="Growth">
+                {row.growth}
+            </td>
+            <td className="projects-table__cell" data-label="Status">
+                <span className={statusClass}>{row.status}</span>
+            </td>
+            <td className="projects-table__cell projects-table__cell--actions" data-label="Actions">
             <button
               type="button"
               className="projects-table__action"

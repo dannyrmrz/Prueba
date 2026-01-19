@@ -342,3 +342,65 @@
     white-space: nowrap;
   }
 }
+
+@media (max-width: 640px) {
+  .projects-table-card {
+    padding: 1.1rem;
+    border-radius: 22px;
+  }
+
+  .projects-table th,
+  .projects-table td {
+    white-space: normal;
+  }
+
+  .projects-table thead {
+    display: none;
+  }
+
+  .projects-table,
+  .projects-table tbody,
+  .projects-table tr,
+  .projects-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .projects-table tr {
+    background-color: #fffefb;
+    border: 1px solid rgba(245, 163, 31, 0.35);
+    border-radius: 18px;
+    padding: 0.95rem 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 12px 30px rgba(10, 15, 5, 0.06);
+  }
+
+  .projects-table td {
+    border-bottom: none;
+    padding: 0.55rem 0;
+    font-size: 0.92rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .projects-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6f736d;
+    flex: 0 0 45%;
+  }
+
+  .projects-table__cell--company {
+    font-size: 1rem;
+  }
+
+  .projects-table__cell--actions,
+  .projects-table__cell--actions button {
+    width: 100%;
+  }
+
+  .projects-table__cell--actions {
+    padding-top: 0.9rem;
+  }
+}
