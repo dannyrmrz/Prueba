@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faSort } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { useProjectsInsights } from '../../../backend/services/projectsDataService';
+import { useProjectsInsights, resolveProjectId } from '../../../backend/services/projectsDataService';
 import '../Dashboard/DashboardScreen.css';
 import './ProjectsScreen.css';
 
@@ -72,17 +72,53 @@ const resolveCompanyName = (project) =>
 
 const normalizeStatus = (status) => status?.toString().trim().toLowerCase() || 'unknown';
 
+const buildRawUpdatePayload = (values) => {
+  const payload = {};
+  const assign = (key, value) => {
+    if (value !== undefined) {
+      payload[key] = value;
+    }
+  };
+
+  assign('Company Name', values.companyName);
+  assign('Company', values.companyName);
+  assign('Client', values.companyName);
+  assign('Client Name', values.companyName);
+  assign('Category', values.category);
+  assign('Status', values.status);
+  assign('Founded', values.founded);
+  assign('Founded Year', values.founded);
+  assign('Employees', values.employees);
+  assign('Revenue', values.revenue);
+  assign('Annual Revenue', values.revenue);
+  assign('Growth', values.growth);
+  assign('YoY Growth', values.growth);
+
+  return payload;
+};
+
 const ProjectsScreen = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { projects, isLoading, error } = useProjectsInsights();
+  const { projects, isLoading, error, updateProject } = useProjectsInsights();
   const [sortConfig, setSortConfig] = useState({ key: 'companyName', direction: 'asc' });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
+  const [formValues, setFormValues] = useState({
+    companyName: '',
+    category: '',
+    status: '',
+    founded: '',
+    employees: '',
+    revenue: '',
+    growth: ''
+  });
 
   const projectRows = useMemo(
     () =>
       projects.map((project, index) => ({
-        id: project.ID || project.Id || project.id || index,
+        id: project.__projectId ?? resolveProjectId(project, index),
         companyName: resolveCompanyName(project),
         category: pickFirstAvailable(project, ['Category', 'Sector', 'Industry'], 'General'),
         founded: pickFirstAvailable(
@@ -150,6 +186,43 @@ const ProjectsScreen = () => {
     navigate(path);
   };
 
+  const handleEditClick = (row) => {
+    setEditingRow(row);
+    setFormValues({
+      companyName: row.companyName || '',
+      category: row.category || '',
+      status: row.status || '',
+      founded: row.founded || '',
+      employees: row.employees || '',
+      revenue: row.revenue || '',
+      growth: row.growth || ''
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleCancelEdit = () => {
+    setIsModalOpen(false);
+    setEditingRow(null);
+  };
+
+  const handleSaveChanges = (event) => {
+    event.preventDefault();
+    if (!editingRow) return;
+
+    const rawUpdates = buildRawUpdatePayload(formValues);
+    updateProject(editingRow.id, rawUpdates);
+    setIsModalOpen(false);
+    setEditingRow(null);
+  };
+
   const handleSort = (key) => {
     setSortConfig((prev) => {
       if (prev.key === key) {
@@ -212,7 +285,11 @@ const ProjectsScreen = () => {
             <span className={statusClass}>{row.status}</span>
           </td>
           <td className="projects-table__cell projects-table__cell--actions">
-            <button type="button" className="projects-table__action">
+            <button
+              type="button"
+              className="projects-table__action"
+              onClick={() => handleEditClick(row)}
+            >
               <FontAwesomeIcon icon={faPen} />
               <span>Edit</span>
             </button>
@@ -220,6 +297,128 @@ const ProjectsScreen = () => {
         </tr>
       );
     });
+  };
+
+  const renderEditModal = () => {
+    if (!isModalOpen || !editingRow) {
+      return null;
+    }
+
+    return (
+      <div className="projects-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="projects-edit-title">
+        <div className="projects-modal">
+          <div className="projects-modal__header">
+            <h2 id="projects-edit-title">Edit Project</h2>
+          </div>
+          <div className="projects-modal__divider projects-modal__divider--full" />
+          <form className="projects-modal__form" onSubmit={handleSaveChanges}>
+            <label className="projects-modal__field">
+              <span className="projects-modal__label">Project name</span>
+              <input
+                type="text"
+                name="companyName"
+                className="projects-modal__input"
+                value={formValues.companyName}
+                onChange={handleInputChange}
+                placeholder={editingRow.companyName}
+                required
+              />
+            </label>
+
+            <label className="projects-modal__field">
+              <span className="projects-modal__label">Category</span>
+              <input
+                type="text"
+                name="category"
+                className="projects-modal__input"
+                value={formValues.category}
+                onChange={handleInputChange}
+                placeholder={editingRow.category}
+                required
+              />
+            </label>
+
+            <label className="projects-modal__field">
+              <span className="projects-modal__label">Status</span>
+              <input
+                type="text"
+                name="status"
+                className="projects-modal__input"
+                value={formValues.status}
+                onChange={handleInputChange}
+                placeholder={editingRow.status}
+                required
+              />
+            </label>
+
+            <div className="projects-modal__grid">
+              <label className="projects-modal__field">
+                <span className="projects-modal__label">Founded</span>
+                <input
+                  type="text"
+                  name="founded"
+                  className="projects-modal__input"
+                  value={formValues.founded}
+                  onChange={handleInputChange}
+                  placeholder={editingRow.founded}
+                />
+              </label>
+
+              <label className="projects-modal__field">
+                <span className="projects-modal__label">Employees</span>
+                <input
+                  type="text"
+                  name="employees"
+                  className="projects-modal__input"
+                  value={formValues.employees}
+                  onChange={handleInputChange}
+                  placeholder={editingRow.employees}
+                />
+              </label>
+            </div>
+
+            <div className="projects-modal__grid">
+              <label className="projects-modal__field">
+                <span className="projects-modal__label">Revenue</span>
+                <input
+                  type="text"
+                  name="revenue"
+                  className="projects-modal__input"
+                  value={formValues.revenue}
+                  onChange={handleInputChange}
+                  placeholder={editingRow.revenue}
+                />
+                <span className="projects-modal__hint">Format: $XXM</span>
+              </label>
+
+              <label className="projects-modal__field">
+                <span className="projects-modal__label">Growth</span>
+                <input
+                  type="text"
+                  name="growth"
+                  className="projects-modal__input"
+                  value={formValues.growth}
+                  onChange={handleInputChange}
+                  placeholder={editingRow.growth}
+                />
+                <span className="projects-modal__hint">Format: +XX%</span>
+              </label>
+            </div>
+
+            <div className="projects-modal__divider projects-modal__divider--narrow" />
+
+            <div className="projects-modal__actions">
+              <button type="button" className="projects-modal__btn" onClick={handleCancelEdit}>
+                Cancel
+              </button>
+              <button type="submit" className="projects-modal__btn projects-modal__btn--primary">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -272,6 +471,7 @@ const ProjectsScreen = () => {
             </div>
           </section>
         )}
+        {renderEditModal()}
       </section>
     </main>
   );

@@ -3,6 +3,47 @@ import * as XLSX from 'xlsx';
 import projectsWorkbookUrl from '../data/Projects_Database.xlsx?url';
 
 const CATEGORY_COLORS = ['#f5a31f', '#ffcf73', '#5fbeab', '#b097f6', '#ef476f', '#118ab2'];
+const STORAGE_KEY = 'projects_overrides_v1';
+
+export const resolveProjectId = (project, fallbackIndex = 0) =>
+  project?.ID ?? project?.Id ?? project?.id ?? fallbackIndex;
+
+const isBrowser = typeof window !== 'undefined';
+
+const loadOverrides = () => {
+  if (!isBrowser) {
+    return {};
+  }
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch (err) {
+    console.warn('No se pudieron cargar overrides de proyectos', err);
+    return {};
+  }
+};
+
+const persistOverrides = (overrides) => {
+  if (!isBrowser) {
+    return;
+  }
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(overrides));
+  } catch (err) {
+    console.warn('No se pudieron guardar overrides de proyectos', err);
+  }
+};
+
+const applyOverrides = (projects, overrides) =>
+  projects.map((project, index) => {
+    const projectId = resolveProjectId(project, index);
+    const override = overrides[projectId];
+    return {
+      ...project,
+      ...(override || {}),
+      __projectId: projectId
+    };
+  });
 
 const normalizeCategory = (value = 'Other') => {
   const safe = value?.toString().trim();
@@ -147,8 +188,10 @@ export const useProjectsInsights = () => {
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const firstSheetName = workbook.SheetNames[0];
         const raw = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
+        const overrides = loadOverrides();
+        const withOverrides = applyOverrides(raw, overrides);
         if (isMounted) {
-          setProjects(raw);
+          setProjects(withOverrides);
         }
       } catch (err) {
         if (isMounted) {
@@ -178,5 +221,33 @@ export const useProjectsInsights = () => {
     [projects]
   );
 
-  return { projects, metrics, charts, isLoading, error };
+  const updateProject = (projectId, updates) => {
+    setProjects((prev) => {
+      const overrides = loadOverrides();
+      const nextProjects = prev.map((project, index) => {
+        const currentId = project.__projectId ?? resolveProjectId(project, index);
+        if (currentId !== projectId) {
+          return project;
+        }
+        return {
+          ...project,
+          ...updates,
+          __projectId: currentId
+        };
+      });
+
+      const mergedOverrides = {
+        ...overrides,
+        [projectId]: {
+          ...(overrides[projectId] || {}),
+          ...updates
+        }
+      };
+      persistOverrides(mergedOverrides);
+
+      return nextProjects;
+    });
+  };
+
+  return { projects, metrics, charts, isLoading, error, updateProject };
 };
