@@ -81,7 +81,7 @@ const parseGrowthValue = (value) => {
   return match ? parseFloat(match[1]) : 0;
 };
 
-const getDashboardMetrics = (projects) => {
+export const getDashboardMetrics = (projects) => {
   if (!projects.length) {
     return {
       totalProjects: 0,
@@ -110,7 +110,7 @@ const getDashboardMetrics = (projects) => {
   };
 };
 
-const buildRevenueByCategory = (projects) => {
+export const buildRevenueByCategory = (projects) => {
   const map = {};
 
   projects.forEach((project) => {
@@ -129,7 +129,7 @@ const buildRevenueByCategory = (projects) => {
     }));
 };
 
-const buildProjectsByCategory = (projects) => {
+export const buildProjectsByCategory = (projects) => {
   const map = {};
   projects.forEach((project) => {
     const key = project.Category?.toString().toLowerCase() || 'other';
@@ -158,7 +158,7 @@ const resolveCompanyName = (project) => {
   return normalized || 'Sin nombre';
 };
 
-const buildTopCompaniesSeries = (projects, limit = 6) => {
+export const buildTopCompaniesSeries = (projects, limit = 6) => {
   return projects
     .map((project) => ({
       company: resolveCompanyName(project),

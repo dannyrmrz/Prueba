@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TrendingUp } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import {
   Bar,
   BarChart,
@@ -17,8 +19,56 @@ import {
 } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { useProjectsInsights } from '../../../backend/services/projectsDataService';
+import {
+  useProjectsInsights,
+  getDashboardMetrics,
+  buildRevenueByCategory,
+  buildProjectsByCategory,
+  buildTopCompaniesSeries
+} from '../../../backend/services/projectsDataService';
 import './DashboardScreen.css';
+
+const pickProjectField = (project, keys) => {
+  for (const key of keys) {
+    const value = project[key];
+    if (value !== undefined && value !== null && value !== '') {
+      return value.toString();
+    }
+  }
+  return '';
+};
+
+const parseRevenueToMillions = (value) => {
+  if (!value) return Number.NaN;
+  const stringValue = value.toString();
+  const match = stringValue.replace(/,/g, '').match(/(-?[\d.]+)/);
+  if (!match) return Number.NaN;
+  const amount = parseFloat(match[1]);
+  if (Number.isNaN(amount)) return Number.NaN;
+  if (/b/i.test(stringValue)) {
+    return amount * 1000;
+  }
+  if (/k/i.test(stringValue)) {
+    return amount / 1000;
+  }
+  return amount;
+};
+
+const parseRevenueRange = (input) => {
+  if (!input?.trim()) {
+    return null;
+  }
+  const matches = input.match(/[\d.]+/g);
+  if (!matches || matches.length === 0) {
+    return null;
+  }
+  const min = parseFloat(matches[0]);
+  const max = matches[1] ? parseFloat(matches[1]) : null;
+  return {
+    min: Number.isNaN(min) ? null : min,
+    max: max !== null && Number.isNaN(max) ? null : max
+  };
+};
 
 const RevenueTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) {
@@ -77,13 +127,77 @@ const DashboardScreen = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { metrics, charts, isLoading, error } = useProjectsInsights();
+  const { isLoading, error, projects } = useProjectsInsights();
+  const [filters, setFilters] = useState({
+    category: '',
+    status: '',
+    revenueRange: ''
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/', { replace: true });
     }
   }, [isAuthenticated, navigate]);
+
+  const totalProjects = projects.length;
+
+  const filteredProjects = useMemo(() => {
+    if (!totalProjects) {
+      return [];
+    }
+
+    const revenueRange = parseRevenueRange(filters.revenueRange.trim());
+    const normalizedCategory = filters.category.trim().toLowerCase();
+    const normalizedStatus = filters.status.trim().toLowerCase();
+
+    return projects.filter((project) => {
+      const projectCategory = pickProjectField(project, ['Category', 'Sector', 'Industry']);
+      const projectStatus = pickProjectField(project, ['Status', 'State']);
+      const projectRevenue = pickProjectField(project, ['Revenue', 'Annual Revenue']);
+
+      const matchesCategory = !normalizedCategory
+        || projectCategory.toLowerCase().includes(normalizedCategory);
+      const matchesStatus = !normalizedStatus
+        || projectStatus.toLowerCase().includes(normalizedStatus);
+
+      let matchesRevenue = true;
+      if (revenueRange) {
+        const revenueValue = parseRevenueToMillions(projectRevenue);
+        if (Number.isNaN(revenueValue)) {
+          matchesRevenue = false;
+        } else {
+          if (revenueRange.min !== null && revenueValue < revenueRange.min) {
+            matchesRevenue = false;
+          }
+          if (matchesRevenue && revenueRange.max !== null && revenueValue > revenueRange.max) {
+            matchesRevenue = false;
+          }
+        }
+      }
+
+      return matchesCategory && matchesStatus && matchesRevenue;
+    });
+  }, [filters, projects, totalProjects]);
+
+  const filteredMetrics = useMemo(() => getDashboardMetrics(filteredProjects), [filteredProjects]);
+
+  const filteredCharts = useMemo(
+    () => ({
+      revenueByCategory: buildRevenueByCategory(filteredProjects),
+      projectsByCategory: buildProjectsByCategory(filteredProjects),
+      topCompanies: buildTopCompaniesSeries(filteredProjects)
+    }),
+    [filteredProjects]
+  );
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleLogout = () => {
     logout();
@@ -95,15 +209,15 @@ const DashboardScreen = () => {
   };
 
   const metricCards = [
-    { label: 'Total Projects', value: metrics.totalProjects.toLocaleString() },
-    { label: 'Total Revenue', value: metrics.totalRevenueLabel },
-    { label: 'Avg Growth', value: metrics.averageGrowthLabel },
-    { label: 'Active Projects', value: metrics.activeProjects.toLocaleString() }
+    { label: 'Total Projects', value: filteredMetrics.totalProjects.toLocaleString() },
+    { label: 'Total Revenue', value: filteredMetrics.totalRevenueLabel },
+    { label: 'Avg Growth', value: filteredMetrics.averageGrowthLabel },
+    { label: 'Active Projects', value: filteredMetrics.activeProjects.toLocaleString() }
   ];
 
-  const hasRevenueData = charts.revenueByCategory.length > 0;
-  const hasProjectsPie = charts.projectsByCategory.length > 0;
-  const hasTopCompanies = charts.topCompanies?.length > 0;
+  const hasRevenueData = filteredCharts.revenueByCategory.length > 0;
+  const hasProjectsPie = filteredCharts.projectsByCategory.length > 0;
+  const hasTopCompanies = filteredCharts.topCompanies?.length > 0;
 
   return (
     <main className="dashboard-layout">
@@ -128,6 +242,49 @@ const DashboardScreen = () => {
           <div className="dashboard-state dashboard-state--error">{error}</div>
         ) : (
           <>
+            <section className="dashboard-filters-card" aria-label="Filters">
+              <div className="dashboard-filters-card__header">
+                <FontAwesomeIcon icon={faFilter} />
+                <h2>Filters</h2>
+              </div>
+              <div className="dashboard-filters-card__grid">
+                <label className="dashboard-filters-card__field">
+                  <span>Category</span>
+                  <input
+                    type="text"
+                    name="category"
+                    value={filters.category}
+                    onChange={handleFilterChange}
+                    placeholder=""
+                  />
+                </label>
+                <label className="dashboard-filters-card__field">
+                  <span>Status</span>
+                  <input
+                    type="text"
+                    name="status"
+                    value={filters.status}
+                    onChange={handleFilterChange}
+                    placeholder=""
+                  />
+                </label>
+                <label className="dashboard-filters-card__field">
+                  <span>Revenue Range</span>
+                  <input
+                    type="text"
+                    name="revenueRange"
+                    value={filters.revenueRange}
+                    onChange={handleFilterChange}
+                    placeholder="$10-50"
+                  />
+                </label>
+              </div>
+              <div className="dashboard-filters-card__divider" />
+              <p className="dashboard-filters-card__meta">
+                Showing {filteredProjects.length} of {totalProjects} projects
+              </p>
+            </section>
+
             <section className="dashboard-metrics" aria-label="KPI overview">
               {metricCards.map((card) => (
                 <article key={card.label} className="metric-card">
@@ -146,7 +303,7 @@ const DashboardScreen = () => {
                 <div className="chart-card__body chart-card__body--bars">
                   {hasRevenueData ? (
                     <ResponsiveContainer width="100%" height={320}>
-                      <BarChart data={charts.revenueByCategory}>
+                      <BarChart data={filteredCharts.revenueByCategory}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0e7da" />
                         <XAxis dataKey="category" tickLine={false} axisLine={false} tick={{ fill: '#7d8078' }} />
                         <Tooltip cursor={{ fill: 'rgba(245, 163, 31, 0.15)' }} content={<RevenueTooltip />} />
@@ -160,7 +317,7 @@ const DashboardScreen = () => {
                 <div className="chart-card__footer">
                   <div className="chart-card__trend">
                     <TrendingUp size={18} />
-                    <span>Avg growth {metrics.averageGrowthLabel}</span>
+                    <span>Avg growth {filteredMetrics.averageGrowthLabel}</span>
                   </div>
                   <p>Breakdown of total revenue per category</p>
                 </div>
@@ -177,7 +334,7 @@ const DashboardScreen = () => {
                       <PieChart>
                         <Tooltip content={<PieTooltip />} />
                         <Pie
-                          data={charts.projectsByCategory}
+                          data={filteredCharts.projectsByCategory}
                           dataKey="value"
                           nameKey="category"
                           innerRadius={70}
@@ -185,7 +342,7 @@ const DashboardScreen = () => {
                           paddingAngle={2}
                           stroke="#fefaf4"
                         >
-                          {charts.projectsByCategory.map((entry) => (
+                          {filteredCharts.projectsByCategory.map((entry) => (
                             <Cell key={entry.category} fill={entry.color} />
                           ))}
                         </Pie>
@@ -198,7 +355,7 @@ const DashboardScreen = () => {
                 <div className="chart-card__footer">
                   <div className="chart-card__trend">
                     <TrendingUp size={18} />
-                    <span>Tracking {metrics.totalProjects} total projects</span>
+                    <span>Tracking {filteredMetrics.totalProjects} total projects</span>
                   </div>
                   <p>Category distribution across the portfolio</p>
                 </div>
@@ -212,7 +369,7 @@ const DashboardScreen = () => {
                 <div className="chart-card__body chart-card__body--line">
                   {hasTopCompanies ? (
                     <ResponsiveContainer width="100%" height={380}>
-                      <LineChart data={charts.topCompanies} margin={{ left: 20, right: 20 }}>
+                      <LineChart data={filteredCharts.topCompanies} margin={{ left: 20, right: 20 }}>
                         <CartesianGrid vertical={false} stroke="#f0e7da" />
                         <XAxis
                           dataKey="company"
